@@ -9,6 +9,9 @@
     <Description>A simple client which lets you connect to Twitch chat using Twitch IRC.</Description>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Version>1.0.0</Version>
+    <PackageProjectUrl>https://github.com/HardstuckGuild/TwitchIrcClient</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/HardstuckGuild/TwitchIrcClient</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
