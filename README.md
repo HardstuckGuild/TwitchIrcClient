@@ -5,3 +5,5 @@
 A simple client which lets you connect to Twitch chat using Twitch IRC.
 
 Maintained by Plenyx.
+
+Proper documentation will be added soon.
