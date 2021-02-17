@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TwitchIRCClient
 {
-    class TwitchIrcClient : IDisposable
+    public class TwitchIrcClient : IDisposable
     {
         // public
         /// <summary>
