@@ -47,7 +47,7 @@ namespace TwitchIRCClient
 
         // private
         private readonly string userName;
-        private readonly string password;
+        private readonly string oauthPassword;
         private TcpClient tcpClient;
         private StreamReader inputStream;
         private StreamWriter outputStream;
@@ -57,26 +57,26 @@ namespace TwitchIRCClient
         private const int serverPort = 6667;
 
         /// <summary>
-        /// Create TwitchIrcClient class using user name and a password.
+        /// Create TwitchIrcClient class with specified user name and an oauth2 password.
         /// </summary>
         /// <param name="userName">Username for Twitch IRC</param>
-        /// <param name="password">Password for Twitch IRC</param>
-        public TwitchIrcClient(string userName, string password)
+        /// <param name="oauthPassword">Password for Twitch IRC</param>
+        public TwitchIrcClient(string userName, string oauthPassword)
         {
             this.userName = userName;
-            this.password = password;
+            this.oauthPassword = oauthPassword;
         }
 
         /// <summary>
-        /// Create TwitchIrcClient class using user name, a password and immediate channel join.
+        /// Create TwitchIrcClient class with specified user name, an oauth2 password and an immediate channel join.
         /// </summary>
         /// <param name="userName">Username for Twitch IRC</param>
-        /// <param name="password">Password for Twitch IRC</param>
+        /// <param name="oauthPassword">Password for Twitch IRC</param>
         /// <param name="channelName">Channel to connect to at startup</param>
-        public TwitchIrcClient(string userName, string password, string channelName)
+        public TwitchIrcClient(string userName, string oauthPassword, string channelName)
         {
             this.userName = userName;
-            this.password = password;
+            this.oauthPassword = oauthPassword;
             LastChannelName = channelName.ToLower();
             ChannelNames.Add(LastChannelName);
         }
@@ -126,7 +126,7 @@ namespace TwitchIRCClient
         {
             try
             {
-                await outputStream.WriteLineAsync($"PASS {password}");
+                await outputStream.WriteLineAsync($"PASS {oauthPassword}");
                 await outputStream.WriteLineAsync($"NICK {userName}");
                 if (LastChannelName != "")
                 {
