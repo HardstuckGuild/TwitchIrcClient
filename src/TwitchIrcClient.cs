@@ -217,7 +217,7 @@ namespace TwitchIRCClient
         }
 
         /// <summary>
-        /// Sends a message to a specified channel.
+        /// Sends a Twitch message to a specified channel.
         /// </summary>
         /// <param name="channelName">Name of the channel</param>
         /// <param name="message">Message to send</param>
