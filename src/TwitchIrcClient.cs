@@ -98,6 +98,23 @@ namespace TwitchIRCClient
             }
         }
 
+        /// <summary>
+        /// Start the connection to the IRC in asynchronous context.
+        /// </summary>
+        public async Task BeginConnectionAsync()
+        {
+            try
+            {
+                SetupStreams();
+                StateChange?.Invoke(this, new IrcChangedEventArgs(IrcStates.Connecting));
+                await LoginAsync();
+            }
+            catch
+            {
+                StateChange?.Invoke(this, new IrcChangedEventArgs(IrcStates.Disconnected));
+            }
+        }
+
         private void SetupStreams()
         {
             tcpClient = new TcpClient(serverIp, serverPort);
