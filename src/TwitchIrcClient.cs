@@ -88,9 +88,7 @@ namespace TwitchIRCClient
         {
             try
             {
-                tcpClient = new TcpClient(serverIp, serverPort);
-                inputStream = new StreamReader(tcpClient.GetStream());
-                outputStream = new StreamWriter(tcpClient.GetStream());
+                SetupStreams();
                 StateChange?.Invoke(this, new IrcChangedEventArgs(IrcStates.Connecting));
                 LoginAsync().GetAwaiter().GetResult();
             }
@@ -98,6 +96,13 @@ namespace TwitchIRCClient
             {
                 StateChange?.Invoke(this, new IrcChangedEventArgs(IrcStates.Disconnected));
             }
+        }
+
+        private void SetupStreams()
+        {
+            tcpClient = new TcpClient(serverIp, serverPort);
+            inputStream = new StreamReader(tcpClient.GetStream());
+            outputStream = new StreamWriter(tcpClient.GetStream());
         }
 
         private async Task LoginAsync()
