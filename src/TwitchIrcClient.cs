@@ -122,45 +122,12 @@ namespace TwitchIRCClient
             }
         }
 
-        private void SetupStreams()
-        {
-            tcpClient = new TcpClient(serverIp, serverPort);
-            inputStream = new StreamReader(tcpClient.GetStream());
-            outputStream = new StreamWriter(tcpClient.GetStream());
-        }
-
-        private async Task LoginAsync()
-        {
-            try
-            {
-                await outputStream.WriteLineAsync($"PASS {oauthPassword}");
-                await outputStream.WriteLineAsync($"NICK {userName}");
-                if (LastChannelName != "")
-                {
-                    await outputStream.WriteLineAsync($"JOIN #{LastChannelName}");
-                    StateChange?.Invoke(this, new IrcChangedEventArgs(IrcStates.ChannelJoining, LastChannelName));
-                }
-                await outputStream.FlushAsync();
-                Connecting = true;
-                ReceiveMessage += OnMessageReceived;
-                ReadMessagesThread = new Thread(ReadMessagesAsync)
-                {
-                    IsBackground = true
-                };
-                ReadMessagesThread.Start();
-            }
-            catch
-            {
-                StateChange?.Invoke(this, new IrcChangedEventArgs(IrcStates.Disconnected));
-            }
-        }
-
         /// <summary>
         /// Enter IRC room asynchronously.
         /// </summary>
         /// <param name="channelName">Room name to enter</param>
-        /// <param name="partPreviousChannels">if set to true leave all previous entered channels</param>
-        /// <returns>If room was entered successfully.</returns>
+        /// <param name="partPreviousChannels">if set to true: leave all previous entered channels</param>
+        /// <returns>A Task whether the room was entered successfully.</returns>
         public async Task<bool> JoinRoomAsync(string channelName, bool partPreviousChannels = false)
         {
             channelName = channelName.ToLower();
@@ -197,8 +164,8 @@ namespace TwitchIRCClient
         /// <summary>
         /// Leave IRC room asynchronously.
         /// </summary>
-        /// <param name="channelName">Room name to leave</param>
-        /// <returns>If room was left successfully.</returns>
+        /// <param name="channelName">Name of the room to leave</param>
+        /// <returns>A Task whether the room was left successfully.</returns>
         public async Task<bool> LeaveRoomAsync(string channelName)
         {
             channelName = channelName.ToLower();
@@ -227,7 +194,7 @@ namespace TwitchIRCClient
         /// Sends an IRC message to the server.
         /// </summary>
         /// <param name="message">Message to send</param>
-        /// <returns>If message was successfully sent.</returns>
+        /// <returns>A Task whether the message was successfully sent.</returns>
         public async Task<bool> SendIrcMessageAsync(string message)
         {
             try
@@ -250,7 +217,7 @@ namespace TwitchIRCClient
         /// </summary>
         /// <param name="channelName">Name of the channel</param>
         /// <param name="message">Message to send</param>
-        /// <returns>If message was successfully sent.</returns>
+        /// <returns>A Task whether the message was successfully sent.</returns>
         public async Task<bool> SendChatMessageAsync(string channelName, string message)
         {
             channelName = channelName.ToLower();
@@ -284,6 +251,39 @@ namespace TwitchIRCClient
             inputStream?.Dispose();
             outputStream?.Dispose();
             tcpClient?.Close();
+        }
+
+        private void SetupStreams()
+        {
+            tcpClient = new TcpClient(serverIp, serverPort);
+            inputStream = new StreamReader(tcpClient.GetStream());
+            outputStream = new StreamWriter(tcpClient.GetStream());
+        }
+
+        private async Task LoginAsync()
+        {
+            try
+            {
+                await outputStream.WriteLineAsync($"PASS {oauthPassword}");
+                await outputStream.WriteLineAsync($"NICK {userName}");
+                if (LastChannelName != "")
+                {
+                    await outputStream.WriteLineAsync($"JOIN #{LastChannelName}");
+                    StateChange?.Invoke(this, new IrcChangedEventArgs(IrcStates.ChannelJoining, LastChannelName));
+                }
+                await outputStream.FlushAsync();
+                Connecting = true;
+                ReceiveMessage += OnMessageReceived;
+                ReadMessagesThread = new Thread(ReadMessagesAsync)
+                {
+                    IsBackground = true
+                };
+                ReadMessagesThread.Start();
+            }
+            catch
+            {
+                StateChange?.Invoke(this, new IrcChangedEventArgs(IrcStates.Disconnected));
+            }
         }
 
         private async void ReadMessagesAsync()
