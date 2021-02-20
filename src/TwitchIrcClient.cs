@@ -92,7 +92,7 @@ namespace TwitchIRCClient
                 inputStream = new StreamReader(tcpClient.GetStream());
                 outputStream = new StreamWriter(tcpClient.GetStream());
                 StateChange?.Invoke(this, new IrcChangedEventArgs(IrcStates.Connecting));
-                LoginAsync();
+                LoginAsync().GetAwaiter().GetResult();
             }
             catch
             {
@@ -100,7 +100,7 @@ namespace TwitchIRCClient
             }
         }
 
-        private async void LoginAsync()
+        private async Task LoginAsync()
         {
             try
             {
