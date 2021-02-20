@@ -4,9 +4,9 @@ namespace TwitchIRCClient
 {
     public class IrcMessageEventArgs : EventArgs
     {
-        public string Message { get; }
+        public IrcMessage Message { get; }
 
-        public IrcMessageEventArgs(string message)
+        public IrcMessageEventArgs(IrcMessage message)
         {
             Message = message;
         }

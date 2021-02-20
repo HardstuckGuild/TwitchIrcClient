@@ -293,7 +293,7 @@ namespace TwitchIRCClient
                 try
                 {
                     string message = await inputStream.ReadLineAsync();
-                    ReceiveMessage?.Invoke(this, new IrcMessageEventArgs(message));
+                    ReceiveMessage?.Invoke(this, new IrcMessageEventArgs(IrcMessage.ParseMessage(message)));
                 }
                 catch
                 {
