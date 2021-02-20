@@ -16,9 +16,15 @@ namespace TwitchIRCClient
         public string LastChannelName { get; private set; } = "";
 
         /// <summary>
-        /// List of all channels currently joined.
+        /// A copy of a list of all channels currently joined.
         /// </summary>
-        public List<string> ChannelNames { get; private set; } = new List<string>();
+        public List<string> ChannelNames
+        {
+            get
+            {
+                return new List<string>(_channelNames);
+            }
+        }
 
         /// <summary>
         /// Indicates whether the connection is about to commence.
@@ -46,6 +52,7 @@ namespace TwitchIRCClient
         public event EventHandler<IrcChangedEventArgs> StateChange;
 
         // private
+        private readonly List<string> _channelNames = new List<string>();
         private readonly string userName;
         private readonly string oauthPassword;
         private TcpClient tcpClient;
@@ -78,7 +85,7 @@ namespace TwitchIRCClient
             this.userName = userName;
             this.oauthPassword = oauthPassword;
             LastChannelName = channelName.ToLower();
-            ChannelNames.Add(LastChannelName);
+            _channelNames.Add(LastChannelName);
         }
 
         /// <summary>
@@ -157,17 +164,17 @@ namespace TwitchIRCClient
         public async Task<bool> JoinRoomAsync(string channelName, bool partPreviousChannels = false)
         {
             channelName = channelName.ToLower();
-            if (ChannelNames.Contains(channelName))
+            if (_channelNames.Contains(channelName))
             {
                 return false;
             }
             if (partPreviousChannels)
             {
-                foreach (string name in ChannelNames)
+                foreach (string name in _channelNames)
                 {
                     await LeaveRoomAsync(name);
                 }
-                ChannelNames.Clear();
+                _channelNames.Clear();
             }
             try
             {
@@ -175,7 +182,7 @@ namespace TwitchIRCClient
                 await outputStream.FlushAsync();
                 StateChange?.Invoke(this, new IrcChangedEventArgs(IrcStates.ChannelJoining, channelName));
                 LastChannelName = channelName;
-                ChannelNames.Add(channelName);
+                _channelNames.Add(channelName);
                 return true;
             }
             catch
@@ -195,7 +202,7 @@ namespace TwitchIRCClient
         public async Task<bool> LeaveRoomAsync(string channelName)
         {
             channelName = channelName.ToLower();
-            if (!ChannelNames.Contains(channelName))
+            if (!_channelNames.Contains(channelName))
             {
                 return false;
             }
@@ -204,7 +211,7 @@ namespace TwitchIRCClient
                 await outputStream.WriteLineAsync($"PART #{channelName}");
                 await outputStream.FlushAsync();
                 StateChange?.Invoke(this, new IrcChangedEventArgs(IrcStates.ChannelLeaving, channelName));
-                ChannelNames.Remove(channelName);
+                _channelNames.Remove(channelName);
                 return true;
             }
             catch
@@ -247,7 +254,7 @@ namespace TwitchIRCClient
         public async Task<bool> SendChatMessageAsync(string channelName, string message)
         {
             channelName = channelName.ToLower();
-            if (!ChannelNames.Contains(channelName))
+            if (!_channelNames.Contains(channelName))
             {
                 return false;
             }
