@@ -60,7 +60,7 @@ namespace TwitchIRCClient
         /// Create TwitchIrcClient class with specified user name and an oauth2 password.
         /// </summary>
         /// <param name="userName">Username for Twitch IRC</param>
-        /// <param name="oauthPassword">Password for Twitch IRC</param>
+        /// <param name="oauthPassword">OAuth2 password for Twitch IRC</param>
         public TwitchIrcClient(string userName, string oauthPassword)
         {
             this.userName = userName;
@@ -71,7 +71,7 @@ namespace TwitchIRCClient
         /// Create TwitchIrcClient class with specified user name, an oauth2 password and an immediate channel join.
         /// </summary>
         /// <param name="userName">Username for Twitch IRC</param>
-        /// <param name="oauthPassword">Password for Twitch IRC</param>
+        /// <param name="oauthPassword">OAuth2 password for Twitch IRC</param>
         /// <param name="channelName">Channel to connect to at startup</param>
         public TwitchIrcClient(string userName, string oauthPassword, string channelName)
         {
