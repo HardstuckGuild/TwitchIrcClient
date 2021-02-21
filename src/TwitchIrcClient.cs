@@ -97,7 +97,7 @@ namespace TwitchIRCClient
             {
                 SetupStreams();
                 StateChange?.Invoke(this, new IrcChangedEventArgs(IrcStates.Connecting));
-                LoginAsync().GetAwaiter().GetResult();
+                _ = LoginAsync();
             }
             catch
             {
@@ -293,7 +293,7 @@ namespace TwitchIRCClient
                 try
                 {
                     string message = await inputStream.ReadLineAsync();
-                    ReceiveMessage?.Invoke(this, new IrcMessageEventArgs(IrcMessage.ParseMessage(message)));
+                    ReceiveMessage?.Invoke(this, new IrcMessageEventArgs(new IrcMessage(message)));
                 }
                 catch
                 {
@@ -320,16 +320,16 @@ namespace TwitchIRCClient
                 Connected = false;
                 return;
             }
-            if (!Connected && e.Message.Equals($":tmi.twitch.tv 001 {userName} :Welcome, GLHF!"))
+            if (!Connected && e.Message.OriginalMessage.Equals($":tmi.twitch.tv 001 {userName} :Welcome, GLHF!"))
             {
                 Connected = true;
                 StateChange?.Invoke(this, new IrcChangedEventArgs(IrcStates.Connected));
             }
-            else if (Connected && e.Message.Equals("PING :tmi.twitch.tv"))
+            else if (Connected && e.Message.OriginalMessage.Equals("PING :tmi.twitch.tv"))
             {
                 await SendIrcMessageAsync("PONG :tmi.twitch.tv");
             }
-            else if (Connected && e.Message.Equals($":{userName}.tmi.twitch.tv 353 {userName} = #{LastChannelName} :{userName}"))
+            else if (Connected && e.Message.OriginalMessage.Equals($":{userName}.tmi.twitch.tv 353 {userName} = #{LastChannelName} :{userName}"))
             {
                 StateChange?.Invoke(this, new IrcChangedEventArgs(IrcStates.ChannelJoined, LastChannelName));
             }

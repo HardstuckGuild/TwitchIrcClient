@@ -14,22 +14,20 @@ namespace TwitchIRCClient
 
         public string ChannelMessage { get; }
 
-        private IrcMessage(string message)
+        public IrcMessage(string message)
         {
             OriginalMessage = message;
-            var channelRegex = new Regex(" PRIVMSG #.+ :", RegexOptions.CultureInvariant);
+            var channelRegex = new Regex(" PRIVMSG #.+ :");
             IsChannelMessage = channelRegex.IsMatch(OriginalMessage);
             if (IsChannelMessage)
             {
                 try
                 {
                     var channelNameRegexString = channelRegex.Match(OriginalMessage);
-                    var channelNameRegex = new Regex("#.+(?= )", RegexOptions.CultureInvariant);
-                    var channelName = channelNameRegex.Match(channelNameRegexString.Value).Value.Substring(1);
+                    var channelName = Regex.Match(channelNameRegexString.Value, "#.+(?= )").Value.Substring(1);
                     ChannelName = channelName;
 
-                    var userNameRegex = new Regex(":.+!", RegexOptions.CultureInvariant);
-                    var dirtyUserName = userNameRegex.Match(OriginalMessage).Value.Substring(1);
+                    var dirtyUserName = Regex.Match(OriginalMessage, ":.+!").Value.Substring(1);
                     var userName = dirtyUserName.Substring(0, dirtyUserName.Length - 1);
                     UserName = userName;
 
@@ -45,7 +43,5 @@ namespace TwitchIRCClient
                 }
             }
         }
-
-        internal static IrcMessage ParseMessage(string message) => new IrcMessage(message);
     }
 }
