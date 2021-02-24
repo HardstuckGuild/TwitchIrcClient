@@ -2,18 +2,40 @@
 
 namespace TwitchIRCClient
 {
+    /// <summary>
+    /// Represents a message received from IRC client.
+    /// </summary>
     public class IrcMessage
     {
+        /// <summary>
+        /// The original, unchanged message.
+        /// </summary>
         public string OriginalMessage { get; }
 
+        /// <summary>
+        /// Indicates, whether the message is a Twitch chat message in a Twitch channel.
+        /// </summary>
         public bool IsChannelMessage { get; } = false;
 
+        /// <summary>
+        /// Name of the channel the Twitch chat message occured in, only if IsChannelMessage is true.
+        /// </summary>
         public string ChannelName { get; }
 
+        /// <summary>
+        /// Name of the user who sent the Twitch chat message, only if IsChannelMessage is true.
+        /// </summary>
         public string UserName { get; }
 
+        /// <summary>
+        /// The content of the Twitch chat message, only if IsChannelMessage is true.
+        /// </summary>
         public string ChannelMessage { get; }
 
+        /// <summary>
+        /// Create an IRC message object with specified IRC message.
+        /// </summary>
+        /// <param name="message">an IRC message</param>
         public IrcMessage(string message)
         {
             OriginalMessage = message;

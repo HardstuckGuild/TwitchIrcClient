@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace TwitchIRCClient
 {
+    /// <summary>
+    /// A client for Twitch Irc.
+    /// </summary>
     public class TwitchIrcClient : IDisposable
     {
         // public
@@ -304,6 +307,11 @@ namespace TwitchIRCClient
             }
         }
 
+        /// <summary>
+        /// A method to process MessageReceived event,
+        /// </summary>
+        /// <param name="sender">sender object</param>
+        /// <param name="e">IRC message event args</param>
         protected async void OnMessageReceived(object sender, IrcMessageEventArgs e)
         {
             if ((e == null) || (e.Message == null))
