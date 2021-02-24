@@ -8,7 +8,7 @@ namespace TwitchIRCClient
     public class IrcMessage
     {
         /// <summary>
-        /// The original, unchanged message.
+        /// The original, unmodified IRC message.
         /// </summary>
         public string OriginalMessage { get; }
 

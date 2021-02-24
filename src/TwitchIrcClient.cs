@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace TwitchIRCClient
 {
     /// <summary>
-    /// A client for Twitch Irc.
+    /// A client for Twitch IRC.
     /// </summary>
     public class TwitchIrcClient : IDisposable
     {
@@ -194,7 +194,7 @@ namespace TwitchIRCClient
         }
 
         /// <summary>
-        /// Sends an IRC message to the server.
+        /// Sends an IRC message to the server asynchronously.
         /// </summary>
         /// <param name="message">Message to send</param>
         /// <returns>A Task whether the message was successfully sent.</returns>
@@ -216,7 +216,7 @@ namespace TwitchIRCClient
         }
 
         /// <summary>
-        /// Sends a Twitch message to a specified channel.
+        /// Sends a Twitch message to a specified channel asynchronously.
         /// </summary>
         /// <param name="channelName">Name of the channel</param>
         /// <param name="message">Message to send</param>
@@ -308,7 +308,7 @@ namespace TwitchIRCClient
         }
 
         /// <summary>
-        /// A method to process MessageReceived event,
+        /// A method to process MessageReceived event.
         /// </summary>
         /// <param name="sender">sender object</param>
         /// <param name="e">IRC message event args</param>

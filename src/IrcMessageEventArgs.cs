@@ -9,7 +9,7 @@ namespace TwitchIRCClient
     public class IrcMessageEventArgs : EventArgs
     {
         /// <summary>
-        /// The IRC message received
+        /// The IRC message received.
         /// </summary>
         public IrcMessage Message { get; }
 
