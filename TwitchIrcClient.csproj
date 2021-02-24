@@ -3,9 +3,10 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;netstandard2.0</TargetFrameworks>
     <Platforms>AnyCPU;x64</Platforms>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Copyright>MIT</Copyright>
-    <Authors>HardstuckGuild</Authors>
+    <Authors>HardstuckGuild (Plenyx)</Authors>
     <Description>A simple client which lets you connect to Twitch chat using Twitch IRC.</Description>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Version>1.0.5</Version>
