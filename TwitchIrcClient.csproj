@@ -13,6 +13,8 @@
     <PackageProjectUrl>https://github.com/HardstuckGuild/TwitchIrcClient</PackageProjectUrl>
     <RepositoryUrl>https://github.com/HardstuckGuild/TwitchIrcClient</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
   <ItemGroup>
