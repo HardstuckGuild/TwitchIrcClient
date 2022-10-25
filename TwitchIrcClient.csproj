@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;netstandard2.0;net6.0</TargetFrameworks>
     <Platforms>AnyCPU;x64</Platforms>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -11,10 +11,12 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Version>1.0.6</Version>
     <PackageProjectUrl>https://github.com/HardstuckGuild/TwitchIrcClient</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/HardstuckGuild/TwitchIrcClient</RepositoryUrl>
-    <RepositoryType>GitHub</RepositoryType>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <RepositoryUrl>https://github.com/HardstuckGuild/TwitchIrcClient.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <Title>TwitchIrcClient</Title>
+    <EnableNETAnalyzers>True</EnableNETAnalyzers>
+    <PackageTags>hardstuck;twitchirc;twitchircclient</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

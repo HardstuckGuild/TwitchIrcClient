@@ -5,8 +5,12 @@ namespace TwitchIRCClient
     /// <summary>
     /// Represents a message received from IRC client.
     /// </summary>
-    public class IrcMessage
+    public sealed class IrcMessage
     {
+        private static readonly Regex messageRegex = new Regex("#.+(?= )");
+        private static readonly Regex channelRegex = new Regex(" PRIVMSG #.+ :");
+        private static readonly Regex userNameRegex = new Regex(":.+!");
+
         /// <summary>
         /// The original, unmodified IRC message.
         /// </summary>
@@ -15,7 +19,7 @@ namespace TwitchIRCClient
         /// <summary>
         /// Indicates, whether the message is a Twitch chat message in a Twitch channel.
         /// </summary>
-        public bool IsChannelMessage { get; } = false;
+        public bool IsChannelMessage { get; }
 
         /// <summary>
         /// Name of the channel the Twitch chat message occured in, only if IsChannelMessage is true.
@@ -39,19 +43,16 @@ namespace TwitchIRCClient
         public IrcMessage(string message)
         {
             OriginalMessage = message;
-            var channelRegex = new Regex(" PRIVMSG #.+ :");
             IsChannelMessage = channelRegex.IsMatch(OriginalMessage);
             if (IsChannelMessage)
             {
                 try
                 {
                     var channelNameRegexString = channelRegex.Match(OriginalMessage);
-                    var channelName = Regex.Match(channelNameRegexString.Value, "#.+(?= )").Value.Substring(1);
-                    ChannelName = channelName;
+                    ChannelName = messageRegex.Match(channelNameRegexString.Value).Value.Substring(1);
 
-                    var dirtyUserName = Regex.Match(OriginalMessage, ":.+!").Value.Substring(1);
-                    var userName = dirtyUserName.Substring(0, dirtyUserName.Length - 1);
-                    UserName = userName;
+                    var dirtyUserName = userNameRegex.Match(OriginalMessage).Value.Substring(1);
+                    UserName = dirtyUserName.Substring(0, dirtyUserName.Length - 1);
 
                     var messageSplit = channelRegex.Split(OriginalMessage);
                     ChannelMessage = messageSplit[1];

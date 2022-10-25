@@ -43,6 +43,6 @@
         /// <summary>
         /// Indicates, that a channel was successfully left.
         /// </summary>
-        ChannelLeft
+        ChannelLeft,
     }
 }

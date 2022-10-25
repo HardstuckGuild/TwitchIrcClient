@@ -10,34 +10,28 @@ namespace TwitchIRCClient
     /// <summary>
     /// A client for Twitch IRC.
     /// </summary>
-    public class TwitchIrcClient : IDisposable
+    public sealed class TwitchIrcClient : IDisposable
     {
         // public
         /// <summary>
         /// Last joined channel.
         /// </summary>
-        public string LastChannelName { get; private set; } = "";
+        public string LastChannelName { get; private set; } = string.Empty;
 
         /// <summary>
         /// A copy of a list of all channels currently joined.
         /// </summary>
-        public List<string> ChannelNames
-        {
-            get
-            {
-                return new List<string>(_channelNames);
-            }
-        }
+        public List<string> ChannelNames => new List<string>(_channelNames);
 
         /// <summary>
         /// Indicates whether the connection is about to commence.
         /// </summary>
-        public bool Connecting { get; private set; } = false;
+        public bool Connecting { get; private set; }
 
         /// <summary>
         /// Indicates whether a successfull connection with Twitch has been estabilished.
         /// </summary>
-        public bool Connected { get; private set; } = false;
+        public bool Connected { get; private set; }
 
         /// <summary>
         /// A thread for message invokes.
@@ -250,10 +244,11 @@ namespace TwitchIRCClient
         {
             Connecting = false;
             Connected = false;
-            ReadMessagesThread?.Abort();
             inputStream?.Dispose();
             outputStream?.Dispose();
             tcpClient?.Close();
+            ReadMessagesThread?.Join();
+            GC.SuppressFinalize(this);
         }
 
         private void SetupStreams()
@@ -269,7 +264,7 @@ namespace TwitchIRCClient
             {
                 await outputStream.WriteLineAsync($"PASS {oauthPassword}");
                 await outputStream.WriteLineAsync($"NICK {userName}");
-                if (LastChannelName != "")
+                if (LastChannelName != string.Empty)
                 {
                     await outputStream.WriteLineAsync($"JOIN #{LastChannelName}");
                     StateChange?.Invoke(this, new IrcChangedEventArgs(IrcStates.ChannelJoining, LastChannelName));
@@ -295,7 +290,7 @@ namespace TwitchIRCClient
             {
                 try
                 {
-                    string message = await inputStream.ReadLineAsync();
+                    var message = await inputStream.ReadLineAsync();
                     ReceiveMessage?.Invoke(this, new IrcMessageEventArgs(new IrcMessage(message)));
                 }
                 catch
@@ -312,9 +307,9 @@ namespace TwitchIRCClient
         /// </summary>
         /// <param name="sender">sender object</param>
         /// <param name="e">IRC message event args</param>
-        protected async void OnMessageReceived(object sender, IrcMessageEventArgs e)
+        internal async void OnMessageReceived(object sender, IrcMessageEventArgs e)
         {
-            if ((e == null) || (e.Message == null))
+            if ((e is null) || (e.Message is null))
             {
                 if (Connecting && !Connected)
                 {

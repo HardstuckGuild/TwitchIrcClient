@@ -6,7 +6,7 @@ namespace TwitchIRCClient
     /// Event Args for ReceiveMessage event.
     /// Immutable.
     /// </summary>
-    public class IrcMessageEventArgs : EventArgs
+    public sealed class IrcMessageEventArgs : EventArgs
     {
         /// <summary>
         /// The IRC message received.

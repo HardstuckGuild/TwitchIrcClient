@@ -6,7 +6,7 @@ namespace TwitchIRCClient
     /// Event Args for StateChange event.
     /// Immutable.
     /// </summary>
-    public class IrcChangedEventArgs : EventArgs
+    public sealed class IrcChangedEventArgs : EventArgs
     {
         /// <summary>
         /// IrcStates of the new state currently triggered.
