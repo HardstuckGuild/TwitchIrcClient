@@ -10,7 +10,7 @@ namespace TwitchIrcClient
     /// <summary>
     /// A client for Twitch IRC.
     /// </summary>
-    public sealed class TwitchIrcClient : IDisposable
+    public sealed class TwitchChatClient : IDisposable
     {
         // public
         /// <summary>
@@ -85,7 +85,7 @@ namespace TwitchIrcClient
         /// </summary>
         /// <param name="userName">Username for Twitch IRC</param>
         /// <param name="oauthPassword">OAuth2 password for Twitch IRC</param>
-        public TwitchIrcClient(string userName, string oauthPassword)
+        public TwitchChatClient(string userName, string oauthPassword)
         {
             this.userName = userName;
             this.oauthPassword = oauthPassword;
@@ -97,7 +97,7 @@ namespace TwitchIrcClient
         /// <param name="userName">Username for Twitch IRC</param>
         /// <param name="oauthPassword">OAuth2 password for Twitch IRC</param>
         /// <param name="channelName">Channel to connect to at startup</param>
-        public TwitchIrcClient(string userName, string oauthPassword, string channelName)
+        public TwitchChatClient(string userName, string oauthPassword, string channelName)
         {
             this.userName = userName;
             this.oauthPassword = oauthPassword;
@@ -380,7 +380,7 @@ namespace TwitchIrcClient
             if (Connected && message.OriginalMessage.Equals($":{userName}.tmi.twitch.tv 353 {userName} = #{LastChannelName} :{userName}"))
             {
                 StateChange?.Invoke(this, new IrcChangedEventArgs(IrcState.ChannelJoined, LastChannelName));
-                StateChanged?.Invoke(this, IrcState.ChannelJoining, LastChannelName);
+                StateChanged?.Invoke(this, IrcState.ChannelJoined, LastChannelName);
                 return;
             }
         }
