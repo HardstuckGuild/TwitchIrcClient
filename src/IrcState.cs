@@ -1,9 +1,9 @@
-﻿namespace TwitchIRCClient
+﻿namespace TwitchIrcClient
 {
     /// <summary>
     /// IrcStates enums, used within StateChange event.
     /// </summary>
-    public enum IrcStates
+    public enum IrcState
     {
         /// <summary>
         /// Indicates, that the connection to Twitch has failed.

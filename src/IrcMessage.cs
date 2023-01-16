@@ -1,15 +1,15 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace TwitchIRCClient
+namespace TwitchIrcClient
 {
     /// <summary>
     /// Represents a message received from IRC client.
     /// </summary>
     public sealed class IrcMessage
     {
-        private static readonly Regex messageRegex = new Regex("#.+(?= )");
-        private static readonly Regex channelRegex = new Regex(" PRIVMSG #.+ :");
-        private static readonly Regex userNameRegex = new Regex(":.+!");
+        private static readonly Regex messageRegex = new("#.+(?= )");
+        private static readonly Regex channelRegex = new(" PRIVMSG #.+ :");
+        private static readonly Regex userNameRegex = new(":.+!");
 
         /// <summary>
         /// The original, unmodified IRC message.
@@ -49,10 +49,10 @@ namespace TwitchIRCClient
                 try
                 {
                     var channelNameRegexString = channelRegex.Match(OriginalMessage);
-                    ChannelName = messageRegex.Match(channelNameRegexString.Value).Value.Substring(1);
+                    ChannelName = messageRegex.Match(channelNameRegexString.Value).Value[1..];
 
-                    var dirtyUserName = userNameRegex.Match(OriginalMessage).Value.Substring(1);
-                    UserName = dirtyUserName.Substring(0, dirtyUserName.Length - 1);
+                    var dirtyUserName = userNameRegex.Match(OriginalMessage).Value[1..];
+                    UserName = dirtyUserName[..^1];
 
                     var messageSplit = channelRegex.Split(OriginalMessage);
                     ChannelMessage = messageSplit[1];
