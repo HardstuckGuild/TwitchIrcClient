@@ -56,18 +56,6 @@ namespace TwitchIrcClient
         /// </summary>
         public event StateChangeHandler StateChanged;
 
-        /// <summary>
-        /// An event that triggers on new IRC messages being received.
-        /// </summary>
-        [Obsolete("This event is going to be removed soon in favour of ReceivedMessage event which does not use a wrapper class.")]
-        public event EventHandler<IrcMessageEventArgs> ReceiveMessage;
-
-        /// <summary>
-        /// An event that triggers on new IRC state change.
-        /// </summary>
-        [Obsolete("This event is going to be removed soon in favour of StateChanged event which does not use a wrapper class.")]
-        public event EventHandler<IrcChangedEventArgs> StateChange;
-
         // private
         private readonly List<string> _channelNames = new();
         private readonly string userName;
@@ -113,13 +101,11 @@ namespace TwitchIrcClient
             try
             {
                 SetupStreams();
-                StateChange?.Invoke(this, new IrcChangedEventArgs(IrcState.Connecting));
                 StateChanged?.Invoke(this, IrcState.Connecting);
                 _ = LoginAsync();
             }
             catch
             {
-                StateChange?.Invoke(this, new IrcChangedEventArgs(IrcState.Disconnected));
                 StateChanged?.Invoke(this, IrcState.Disconnected);
             }
         }
@@ -132,13 +118,11 @@ namespace TwitchIrcClient
             try
             {
                 SetupStreams();
-                StateChange?.Invoke(this, new IrcChangedEventArgs(IrcState.Connecting));
                 StateChanged?.Invoke(this, IrcState.Connecting);
                 await LoginAsync();
             }
             catch
             {
-                StateChange?.Invoke(this, new IrcChangedEventArgs(IrcState.Disconnected));
                 StateChanged?.Invoke(this, IrcState.Disconnected);
             }
         }
@@ -168,7 +152,6 @@ namespace TwitchIrcClient
             {
                 await outputStream.WriteLineAsync($"JOIN #{channelName}");
                 await outputStream.FlushAsync();
-                StateChange?.Invoke(this, new IrcChangedEventArgs(IrcState.ChannelJoining, channelName));
                 StateChanged?.Invoke(this, IrcState.ChannelJoining, channelName);
                 LastChannelName = channelName;
                 _channelNames.Add(channelName);
@@ -178,7 +161,6 @@ namespace TwitchIrcClient
             {
                 Connected = false;
                 Connecting = false;
-                StateChange?.Invoke(this, new IrcChangedEventArgs(IrcState.Disconnected));
                 StateChanged?.Invoke(this, IrcState.Disconnected);
                 return false;
             }
@@ -200,7 +182,6 @@ namespace TwitchIrcClient
             {
                 await outputStream.WriteLineAsync($"PART #{channelName}");
                 await outputStream.FlushAsync();
-                StateChange?.Invoke(this, new IrcChangedEventArgs(IrcState.ChannelLeaving, channelName));
                 StateChanged?.Invoke(this, IrcState.ChannelLeaving, channelName);
                 _channelNames.Remove(channelName);
                 return true;
@@ -209,7 +190,6 @@ namespace TwitchIrcClient
             {
                 Connected = false;
                 Connecting = false;
-                StateChange?.Invoke(this, new IrcChangedEventArgs(IrcState.Disconnected));
                 StateChanged?.Invoke(this, IrcState.Disconnected);
                 return false;
             }
@@ -232,7 +212,6 @@ namespace TwitchIrcClient
             {
                 Connected = false;
                 Connecting = false;
-                StateChange?.Invoke(this, new IrcChangedEventArgs(IrcState.Disconnected));
                 StateChanged?.Invoke(this, IrcState.Disconnected);
                 return false;
             }
@@ -261,7 +240,6 @@ namespace TwitchIrcClient
             {
                 Connected = false;
                 Connecting = false;
-                StateChange?.Invoke(this, new IrcChangedEventArgs(IrcState.Disconnected));
                 StateChanged?.Invoke(this, IrcState.Disconnected);
                 return false;
             }
@@ -297,12 +275,10 @@ namespace TwitchIrcClient
                 if (LastChannelName != string.Empty)
                 {
                     await outputStream.WriteLineAsync($"JOIN #{LastChannelName}");
-                    StateChange?.Invoke(this, new IrcChangedEventArgs(IrcState.ChannelJoining, LastChannelName));
                     StateChanged?.Invoke(this, IrcState.ChannelJoining, LastChannelName);
                 }
                 await outputStream.FlushAsync();
                 Connecting = true;
-                ReceiveMessage += OnMessageEventArgsReceived;
                 ReceivedMessage += OnMessageReceived;
                 ReadMessagesThread = new Thread(ReadMessagesAsync)
                 {
@@ -312,7 +288,6 @@ namespace TwitchIrcClient
             }
             catch
             {
-                StateChange?.Invoke(this, new IrcChangedEventArgs(IrcState.Disconnected));
                 StateChanged?.Invoke(this, IrcState.Disconnected);
             }
         }
@@ -324,22 +299,15 @@ namespace TwitchIrcClient
                 try
                 {
                     var message = await inputStream.ReadLineAsync();
-                    ReceiveMessage?.Invoke(this, new IrcMessageEventArgs(new IrcMessage(message)));
                     ReceivedMessage?.Invoke(this, new IrcMessage(message));
                 }
                 catch
                 {
-                    StateChange?.Invoke(this, new IrcChangedEventArgs(IrcState.Disconnected));
                     StateChanged?.Invoke(this, IrcState.Disconnected);
                     Connected = false;
                     Connecting = false;
                 }
             }
-        }
-
-        private async void OnMessageEventArgsReceived(object sender, IrcMessageEventArgs e)
-        {
-            await ProcessMessageAsync(e?.Message);
         }
 
         private async void OnMessageReceived(object sender, IrcMessage message)
@@ -353,12 +321,10 @@ namespace TwitchIrcClient
             {
                 if (Connecting && !Connected)
                 {
-                    StateChange?.Invoke(this, new IrcChangedEventArgs(IrcState.FailedConnection));
                     StateChanged?.Invoke(this, IrcState.FailedConnection);
                 }
                 else
                 {
-                    StateChange?.Invoke(this, new IrcChangedEventArgs(IrcState.Disconnected));
                     StateChanged?.Invoke(this, IrcState.Disconnected);
                 }
                 Connecting = false;
@@ -368,7 +334,6 @@ namespace TwitchIrcClient
             if (!Connected && message.OriginalMessage.Equals($":tmi.twitch.tv 001 {userName} :Welcome, GLHF!"))
             {
                 Connected = true;
-                StateChange?.Invoke(this, new IrcChangedEventArgs(IrcState.Connected));
                 StateChanged?.Invoke(this, IrcState.Connected);
                 return;
             }
@@ -379,7 +344,6 @@ namespace TwitchIrcClient
             }
             if (Connected && message.OriginalMessage.Equals($":{userName}.tmi.twitch.tv 353 {userName} = #{LastChannelName} :{userName}"))
             {
-                StateChange?.Invoke(this, new IrcChangedEventArgs(IrcState.ChannelJoined, LastChannelName));
                 StateChanged?.Invoke(this, IrcState.ChannelJoined, LastChannelName);
                 return;
             }
