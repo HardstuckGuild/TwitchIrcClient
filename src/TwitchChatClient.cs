@@ -65,8 +65,8 @@ namespace TwitchIrcClient
         private StreamWriter outputStream;
 
         // constants
-        private const string serverIp = "irc.chat.twitch.tv";
-        private const int serverPort = 6667;
+        private const string twitchServerIp = "irc.chat.twitch.tv";
+        private const int twitchServerPort = 6667;
 
         /// <summary>
         /// Create TwitchIrcClient class with specified user name and an oauth2 password.
@@ -111,7 +111,7 @@ namespace TwitchIrcClient
         }
 
         /// <summary>
-        /// Start the connection to the IRC in asynchronous context.
+        /// Start the connection to the IRC in an asynchronous context.
         /// </summary>
         public async Task BeginConnectionAsync()
         {
@@ -261,7 +261,7 @@ namespace TwitchIrcClient
 
         private void SetupStreams()
         {
-            tcpClient = new TcpClient(serverIp, serverPort);
+            tcpClient = new TcpClient(twitchServerIp, twitchServerPort);
             inputStream = new StreamReader(tcpClient.GetStream());
             outputStream = new StreamWriter(tcpClient.GetStream());
         }
@@ -310,9 +310,9 @@ namespace TwitchIrcClient
             }
         }
 
-        private async void OnMessageReceived(object sender, IrcMessage message)
+        private void OnMessageReceived(object sender, IrcMessage message)
         {
-            await ProcessMessageAsync(message);
+            _ = ProcessMessageAsync(message);
         }
 
         private async Task ProcessMessageAsync(IrcMessage message)
